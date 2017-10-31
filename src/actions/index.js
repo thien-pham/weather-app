@@ -1,20 +1,16 @@
-export const GET_WEATHER_REQUEST = 'GET_WEATHER_REQUEST'
-export const getWeatherRequest = () => ({type: GET_WEATHER_REQUEST})
-export const GET_WEATHER_SUCCESS = 'GET_WEATHER_SUCCESS'
-export const getWeatherSuccess = (restaurants) => ({type: GET_WEATHER_SUCCESS, restaurants})
-export const GET_WEATHER_FAILURE = 'GET_WEATHER_FAILURE'
-export const getWeatherFailure = () => ({type: GET_WEATHER_FAILURE})
+import axios from 'axios';
 
-export const getWeather = location => dispatch => {
-  dispatch(getWeatherRequest())
-  fetch(`/api.openweathermap.org/data/2.5/forecast?q=${location}`).then(data => {
-    if (!data.ok) {
-      return dispatch(getWeatherFailure())
-    }
-    return data.json()
-  }).then(data => {
-    return dispatch(getWeatherSuccess(data))
-  })
+// const API_KEY = '2e21f075c835bbc2876fa73203798b1b';
+const API_KEY = '585e670f55ee9b114fa2f1f2731177d9';
+const ROOT_URL = `http://api.openweathermap.org/data/2.5/forecast/daily?&appid=${API_KEY}&units=imperial&cnt=5`;
+
+export const FETCH_WEATHER = 'FETCH_WEATHER';
+
+export function fetchWeather(city){
+	const url = `${ROOT_URL}&q=${city}`;
+	const request = axios.get(url);
+	return {
+		type: FETCH_WEATHER,
+		payload: request
+	};
 }
-
-// api.openweathermap.org/data/2.5/forecast?q={city name},{country code}

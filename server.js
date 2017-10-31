@@ -1,17 +1,15 @@
 const express = require('express');
-// const cors = require('cors');
-const PORT = process.env.PORT || 3000;
 const app = express();
+const PORT = process.env.PORT || 8080;
+const cors = require('cors');
 
-app.use(req, res, next => {
-  if (req.headers['x-forwarded-proto'] === 'https') {
-    res.redirect('http://' + req.hostname + req.url);
-  } else {
-    next();
-  }
-});
-
+app.use(cors());
+app.use(express.static('src'));
 app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
 
 app.listen(PORT => {
   console.log(`Listening on port: ${PORT}`);

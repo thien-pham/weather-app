@@ -1,43 +1,88 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import { getWeather } from '../actions'
+import { bindActionCreators } from 'redux'
+import { fetchWeather } from '../actions/index';
 
-export class SearchBar extends Component {
-  constructor(props) {
-    super(props);
-    this.onSearch = this.onSearch.bind(this);
+
+class Searchbar extends Component {
+	constructor(props){
+		super(props);
+		this.state = {
+      term: 'Chicago, IL',
+      isValid: false,
+      isLoading: false,
+      data: null,
+      errorMessage: null
+    };
+
+    this.onInputChange = this.onInputChange.bind(this);
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+	}
+
+  componentWillMount() {
+    this.props.fetchWeather(this.state.term).then(forecast => {
+      this.setState({
+        isLoading: false,
+        data: forecast.list
+      });
+    }, e => {
+        this.setState({
+        isLoading: false,
+        errorMessage: e.message
+      });
+  });
+  this.setState({term: ''})
+};
+
+
+	onInputChange(e){
+		this.setState({ term: e.target.value });
+	}
+
+  validate(term) {
+    const pattern = '[A-Za-z \t-]+,[ \t]?[A-Za-z]{2}$';
+    if(term.match(pattern)) {
+      this.setState({ isValid: true })
+    } else {
+      alert('Enter valid city, state please');
+    }
   }
 
-  onSearch(event) {
-    event.preventDefault();
-    const location = this.locationInput.value;
-    this.form.reset();
-    return this.props.dispatch(getWeather(location));
-  }
+	onFormSubmit(e){
+		e.preventDefault();
+    this.validate(this.refs.searchBox.value);
+		this.props.fetchWeather(this.refs.searchBox.value);
+		this.setState({term: ''});
+	}
 
-  render() {
-    return (
-      <div>
-        <h1>Get Weather</h1>
-        <form onSubmit={e => this.onSearch(e)}>
-          <FormGroup controlId="location">
-            <ControlLabel>City/State</ControlLabel>
-            <FormControl
-              type="text"
-              placeholder="New York, NY"
-              // value={this.props.inputValue}
-              ref={input => this.locationInput = input} />
-            </FormGroup>
-            <Button bsStyle="primary" className="submit_sms" type="submit">Enter</Button>
-        </form>
-      </div>
-    )
-  }
+	render() {
+    if(this.state.errorMessage) {
+      alert('Something went wrong');
+    }
+
+		return (
+			<div className="weather-box1">
+				<form onSubmit={this.onFormSubmit} className="weather-form">
+          <h3>Get Weather</h3>
+          <label htmlFor="form-control">Enter City, 2-Letter State</label>
+					<input
+            id='autocomplete'
+						className="form-control"
+						placeholder="e.g. Arlington, VA"
+            ref='searchBox'
+						value={this.state.term}
+						onChange={this.onInputChange} />
+					<span className="input-group-btn">
+						<button type="submit" className="btn btn-secondary">Search</button>
+					</span>
+				</form>
+			</div>
+		);
+	}
 }
 
-export const mapStateToProps = state => ({
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ fetchWeather }, dispatch)
+}
 
- })
-
-export default connect(mapStateToProps)(SearchBar);
+export default connect(null, mapDispatchToProps)(Searchbar);
