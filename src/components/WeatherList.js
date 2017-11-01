@@ -3,12 +3,6 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 class WeatherList extends Component {
-  // constructor(props){
-  //   super(props);
-  //   this.state = {
-  //     isLoading: true,
-  //     error: null
-  //   };
 
   renderWeather(data) {
     if (data.city) {
@@ -41,15 +35,13 @@ class WeatherList extends Component {
               </thead>
               <tbody>{tableData}</tbody>
             </table>
-
           </div>
         )
     }
 
     else {
-
       return (
-        <div className='landing-box'>
+        <div >
 
         </div>
       )
@@ -72,11 +64,9 @@ class WeatherList extends Component {
   }
 
 	render(){
-    // const { weather } = this.props;
 		return(
-			// <table className="table table-hover weather-table">
       <div>
-      <div>{this.renderCity(this.props.weather)}</div>
+        <div>{this.renderCity(this.props.weather)}</div>
         <div>{this.renderWeather(this.props.weather)}</div>
       </div>
 		);

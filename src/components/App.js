@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Searchbar from './Searchbar';
 import WeatherList from './WeatherList';
-import './App.css';
+import '../style/main.css';
 require('dotenv').config();
 
 export default class App extends Component {
